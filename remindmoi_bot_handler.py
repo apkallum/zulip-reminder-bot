@@ -44,16 +44,15 @@ def get_remind_moi_bot_response(message: Dict[str, Any], bot_handler: Any) -> st
     if is_valid_content(message['content']):
         try:
             reminder_object = parse_content(message)
-            response = requests.post(url=ADD_ENDPOINT, json=reminder_object) # TODO: Catch error when django server is down
+            response = requests.post(url=ADD_ENDPOINT, json=reminder_object)  # TODO: Catch error when django server is down
             response = response.json()
-            import pdb; pdb.set_trace()
             assert response['success']
         except (json.JSONDecodeError, AssertionError):
             return "Something went wrong"
         except OverflowError:
             return "What's wrong with you?"
 
-        return "Reminder stored."  # TODO: Better message
+        return f"Reminder stored. Your reminder id is: {response['reminder_id']}"  
     else:
         return "Invlaid input. Please check help."
 

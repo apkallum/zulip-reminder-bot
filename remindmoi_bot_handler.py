@@ -12,6 +12,7 @@ the following format:
 Example: 
 add reminder 1 day clean the dishes
 add reminder 10 hours eat the cake
+Avaliable time units: minutes, hours, days, weeks
 '''
 
 

@@ -6,7 +6,12 @@ from datetime import timedelta, datetime
 
 USAGE = '''
 A bot that schedules reminders for users.
-- <COMMAND> reminder <int> UNIT <str>
+To store a reminder, mention or send a message to me in
+the following format:
+<COMMAND> reminder <int> UNIT <str>
+Example: 
+add reminder 1 day clean the dishes
+add reminder 10 hours eat the cake
 '''
 
 

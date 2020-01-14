@@ -1,0 +1,59 @@
+*.py[cod]
+
+# C extensions
+*.so
+
+# Packages
+*.egg
+*.egg-info
+dist
+build
+eggs
+parts
+sdist
+develop-eggs
+.installed.cfg
+lib64
+
+# Installer logs
+pip-log.txt
+
+# Unit test / coverage reports
+.coverage
+.tox
+nosetests.xml
+htmlcov/
+.pytest_cache
+
+# Translations
+*.mo
+
+# Mr Developer
+.mr.developer.cfg
+.project
+.pydevproject
+
+# Ignore virtualenvs created by ./tools/provision
+zulip-api-py*-venv
+
+# Automatically generated MANIFEST.in in zulip_bots
+zulip_bots/MANIFEST.in
+
+# Bot configuration files
+zuliprc
+.zuliprc
+botserverrc
+.botserverrc
+
+# vim
+.swp
+
+# mypy
+.mypy_cache
+
+# zip files for bot deployment
+.bots
+
+# Pycharm
+\.DS_Store
+\.idea/

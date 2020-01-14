@@ -1,7 +1,8 @@
 import zulip
 
+from remindmoi.settings import ZULIPRC
 # Pass the path to your zuliprc file here.
-client = zulip.Client(config_file="../zuliprc")
+client = zulip.Client(config_file=ZULIPRC)
 
 
 def send_private_zulip(email: str, msg: str) -> bool:

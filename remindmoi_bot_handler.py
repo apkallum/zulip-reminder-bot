@@ -39,7 +39,7 @@ def get_remind_moi_bot_response(message: Dict[str, Any], bot_handler: Any) -> st
     if is_valid_content(message['content']):
         try:
             reminder_object = parse_content(message)
-            response = requests.post(url=ADD_ENDPOINT, json=reminder_object)
+            response = requests.post(url=ADD_ENDPOINT, json=reminder_object) # TODO: Catch error when django server is down
             response = response.json()
             assert response['success']
         except (json.JSONDecodeError, AssertionError):
@@ -88,16 +88,12 @@ def compute_deadline_timestamp(timestamp_submitted: str, time_value: int, time_u
     Given a submitted stamp and an interval,
     return deadline timestamp.
     """
-    if time_unit in SINGULAR_UNITS:
+    if time_unit in SINGULAR_UNITS:  # Convert singular units to plural
         time_unit = f"{time_unit}s"
 
-    interval = timedelta(**{time_unit: int(time_value)})  # TODO: Create sanitize function
+    interval = timedelta(**{time_unit: int(time_value)})
     datetime_submitted = datetime.fromtimestamp(timestamp_submitted)
     return (datetime_submitted + interval).timestamp()
-
-
-def standardize_time_units(input: str) -> str:
-    pass
 
 
 handler_class = RemindMoiHandler

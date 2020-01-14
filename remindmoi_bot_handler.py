@@ -46,6 +46,7 @@ def get_remind_moi_bot_response(message: Dict[str, Any], bot_handler: Any) -> st
             reminder_object = parse_content(message)
             response = requests.post(url=ADD_ENDPOINT, json=reminder_object) # TODO: Catch error when django server is down
             response = response.json()
+            import pdb; pdb.set_trace()
             assert response['success']
         except (json.JSONDecodeError, AssertionError):
             return "Something went wrong"

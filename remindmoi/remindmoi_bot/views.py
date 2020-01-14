@@ -13,14 +13,21 @@ from remindmoi_bot.zulip_utils import send_private_zulip
 @require_POST
 def add_reminder(request):
     # TODO: make it safer. Add CSRF validation. Sanitize/validate post data
-    reminder_obj = json.loads(request.body)
+    reminder_obj = json.loads(request.body)  # Create and save remninder object
     reminder = Reminder(**reminder_obj)
     reminder.save()
     msg = f"Don't forget: {reminder.title}"
-    scheduler.add_job(
+    scheduler.add_job(  # Schedule reminder
         send_private_zulip,
         'date',
         run_date=reminder.deadline,
         args=[reminder.zulip_user_email, msg]
     )
-    return JsonResponse({'success': True})
+    return JsonResponse({'success': True,
+                         'reminder_id': reminder.reminder_id})
+
+
+@csrf_exempt
+@require_POST
+def remove_reminder(request):
+    pass

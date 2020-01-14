@@ -1,0 +1,18 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+ipdb = "*"
+django-extensions = "*"
+
+[packages]
+zulip = "*"
+zulip-bots = "*"
+zulip-botserver = "*"
+django-apscheduler = "*"
+Django = "*"
+
+[requires]
+python_version = "3.6"

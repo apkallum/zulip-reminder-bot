@@ -64,7 +64,7 @@ def is_valid_content(content: str, commands=COMMANDS, units=UNITS + SINGULAR_UNI
         assert content[3] in units
         assert type(content[4]) == str
         return True
-    except (IndexError, AssertionError):
+    except (IndexError, AssertionError, ValueError):
         return False
 
 

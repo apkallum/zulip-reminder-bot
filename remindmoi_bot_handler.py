@@ -21,6 +21,7 @@ UNITS = ['minutes', 'hours', 'days', 'weeks']
 SINGULAR_UNITS = ['minute', 'hour', 'day', 'week']
 
 ADD_ENDPOINT = 'http://localhost:8000/add_reminder/'
+REMOVE_ENDPOINT = 'http://localhost:8000/remove_reminder'
 
 
 class RemindMoiHandler(object):
@@ -51,11 +52,16 @@ def get_bot_response(message: Dict[str, Any], bot_handler: Any) -> str:
             return "Something went wrong"
         except OverflowError:
             return "What's wrong with you?"
-        return f"Reminder stored. Your reminder id is: {response['reminder_id']}"  
+        return f"Reminder stored. Your reminder id is: {response['reminder_id']}"
     if is_valid_remove_command(message['content']):
-        reminder_id = parse_remove_remove_command(message['content'])
-        pass
-
+        try:
+            reminder_id = parse_remove_remove_command(message['content'])
+            response = requests.post(url=REMOVE_ENDPOINT, json=reminder_id)
+            response = response.json()
+            assert response['success']
+        except (json.JSONDecodeError, AssertionError):
+            return "Something went wrong"
+        return "Reminder deleted."
     else:
         return "Invlaid input. Please check help."
 
@@ -102,9 +108,9 @@ def parse_add_command_content(message: Dict[str, Any]) -> Dict[str, Any]:
     }
 
 
-def parse_remove_remove_command(content: str) -> str:
+def parse_remove_remove_command(content: str) -> Dict[str, Any]:
     command = content.split(' ')
-    return command[2]
+    return {'reminder_id': command[2]}
 
 
 def compute_deadline_timestamp(timestamp_submitted: str, time_value: int, time_unit: str) -> str:

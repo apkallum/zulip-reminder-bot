@@ -30,4 +30,7 @@ def add_reminder(request):
 @csrf_exempt
 @require_POST
 def remove_reminder(request):
-    pass
+    reminder_id = json.loads(request.body)['reminder_id']
+    reminder = Reminder.objects.get(reminder_id=int(reminder_id))
+    reminder.delete()
+    return JsonResponse({'success': True})

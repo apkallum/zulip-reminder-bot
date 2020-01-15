@@ -34,3 +34,19 @@ def remove_reminder(request):
     reminder = Reminder.objects.get(reminder_id=int(reminder_id))
     reminder.delete()
     return JsonResponse({'success': True})
+
+
+@csrf_exempt
+@require_POST
+def list_reminders(request):
+    response_reminders = []  # List of reminders to be returned to the client
+
+    zulip_user_email = json.loads(request.body)['zulip_user_email']
+    user_reminders = Reminder.objects.filter(zulip_user_email=zulip_user_email)
+    # Return title and deadline (in unix timestamp) of reminders
+    for reminder in user_reminders.values():
+        response_reminders.append({'title': reminder['title'],
+                                   'deadline': reminder['deadline'].timestamp(),
+                                   'reminder_id': reminder['reminder_id']})
+
+    return JsonResponse({'success': True, 'reminders_list': response_reminders})

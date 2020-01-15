@@ -23,12 +23,13 @@ list reminders
 '''
 
 
-COMMANDS = ['add', 'remove']
+COMMANDS = ['add', 'remove', 'list']
 UNITS = ['minutes', 'hours', 'days', 'weeks']
 SINGULAR_UNITS = ['minute', 'hour', 'day', 'week']
 
 ADD_ENDPOINT = 'http://localhost:8000/add_reminder/'
 REMOVE_ENDPOINT = 'http://localhost:8000/remove_reminder'
+LIST_ENDPOINT = 'http://localhost:8000/list_reminders'
 
 
 class RemindMoiHandler(object):
@@ -62,13 +63,22 @@ def get_bot_response(message: Dict[str, Any], bot_handler: Any) -> str:
         return f"Reminder stored. Your reminder id is: {response['reminder_id']}"
     if is_valid_remove_command(message['content']):
         try:
-            reminder_id = parse_remove_remove_command(message['content'])
+            reminder_id = parse_remove_command_content(message['content'])
             response = requests.post(url=REMOVE_ENDPOINT, json=reminder_id)
             response = response.json()
             assert response['success']
         except (json.JSONDecodeError, AssertionError):
             return "Something went wrong"
         return "Reminder deleted."
+    if is_valid_list_command(message['content']):
+        try:
+            zulip_user_email = {'zulip_user_email': message["sender_email"]}
+            response = requests.post(url=LIST_ENDPOINT, json=zulip_user_email)
+            response = response.json()
+            assert response['success']
+        except (json.JSONDecodeError, AssertionError):
+            return "Something went wrong"
+        return parse_reminders_list(response)
     else:
         return "Invlaid input. Please check help."
 
@@ -100,6 +110,16 @@ def is_valid_remove_command(content: str) -> bool:
         return False
 
 
+def is_valid_list_command(content: str) -> bool:
+    try:
+        command = content.split(' ')
+        assert command[0] == 'list'
+        assert command[1] == 'reminders'
+        return True
+    except (AssertionError, IndexError):
+        return False
+
+
 def parse_add_command_content(message: Dict[str, Any]) -> Dict[str, Any]:
     """
     Given a message object with reminder details,
@@ -115,9 +135,19 @@ def parse_add_command_content(message: Dict[str, Any]) -> Dict[str, Any]:
     }
 
 
-def parse_remove_remove_command(content: str) -> Dict[str, Any]:
+def parse_remove_command_content(content: str) -> Dict[str, Any]:
     command = content.split(' ')
     return {'reminder_id': command[2]}
+
+
+def parse_reminders_list(response: Dict[str, Any]) -> str:
+    bot_response = ''
+    reminders_list = response['reminders_list']
+    for reminder in reminders_list:
+        bot_response += f"""
+        \nReminder id {reminder['reminder_id']}, titled {reminder['title']}, is scheduled on {datetime.fromtimestamp(reminder['deadline']).strftime('%Y-%m-%d %H:%M')}
+        """
+    return bot_response
 
 
 def compute_deadline_timestamp(timestamp_submitted: str, time_value: int, time_unit: str) -> str:

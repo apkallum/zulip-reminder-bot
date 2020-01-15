@@ -13,6 +13,8 @@ zulip-bots = "*"
 zulip-botserver = "*"
 django-apscheduler = "*"
 Django = "*"
+mypy = "*"
+ipdb = "*"
 
 [requires]
 python_version = "3.6"

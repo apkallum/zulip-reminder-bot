@@ -21,7 +21,7 @@ def add_reminder(request):
         send_private_zulip,
         'date',
         run_date=reminder.deadline,
-        args=[reminder.zulip_user_email, msg]
+        args=[reminder.zulip_user_email, msg, reminder.reminder_id]
     )
     return JsonResponse({'success': True,
                          'reminder_id': reminder.reminder_id})

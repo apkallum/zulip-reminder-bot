@@ -33,18 +33,17 @@ class RemindMoiHandler(object):
         return USAGE
 
     def handle_message(self, message: Dict[str, Any], bot_handler: Any) -> None:
-        bot_response = get_remind_moi_bot_response(message, bot_handler)
+        bot_response = get_bot_response(message, bot_handler)
         bot_handler.send_reply(message, bot_response)
 
 
-def get_remind_moi_bot_response(message: Dict[str, Any], bot_handler: Any) -> str:
-
+def get_bot_response(message: Dict[str, Any], bot_handler: Any) -> str:
     if message['content'].startswith(('help', '?')):
         return USAGE
 
-    if is_valid_content(message['content']):
+    if is_valid_add_command(message['content']):
         try:
-            reminder_object = parse_content(message)
+            reminder_object = parse_add_command_content(message)
             response = requests.post(url=ADD_ENDPOINT, json=reminder_object)  # TODO: Catch error when django server is down
             response = response.json()
             assert response['success']
@@ -52,29 +51,43 @@ def get_remind_moi_bot_response(message: Dict[str, Any], bot_handler: Any) -> st
             return "Something went wrong"
         except OverflowError:
             return "What's wrong with you?"
-
         return f"Reminder stored. Your reminder id is: {response['reminder_id']}"  
+    if is_valid_remove_command(message['content']):
+        reminder_id = parse_remove_remove_command(message['content'])
+        pass
+
     else:
         return "Invlaid input. Please check help."
 
 
-def is_valid_content(content: str, commands=COMMANDS, units=UNITS + SINGULAR_UNITS) -> bool:
+def is_valid_add_command(content: str, units=UNITS + SINGULAR_UNITS) -> bool:
     """
     Ensure message is in form <COMMAND> reminder <int> UNIT <str>
     """
     try:
-        content = content.split(' ', maxsplit=4)  # Ensure the last element is str
-        assert content[0] in commands
-        assert content[1] == 'reminder'
-        assert type(int(content[2])) == int
-        assert content[3] in units
-        assert type(content[4]) == str
+        command = content.split(' ', maxsplit=4)  # Ensure the last element is str
+        assert command[0] == 'add'
+        assert command[1] == 'reminder'
+        assert type(int(command[2])) == int
+        assert command[3] in units
+        assert type(command[4]) == str
         return True
     except (IndexError, AssertionError, ValueError):
         return False
 
 
-def parse_content(message: Dict[str, Any]) -> Dict[str, Any]:
+def is_valid_remove_command(content: str) -> bool:
+    try:
+        command = content.split(' ')
+        assert command[0] == 'remove'
+        assert command[1] == 'reminder'
+        assert type(int(command[2])) == int
+        return True
+    except (AssertionError, IndexError):
+        return False
+
+
+def parse_add_command_content(message: Dict[str, Any]) -> Dict[str, Any]:
     """
     Given a message object with reminder details,
     construct a JSON/dict.
@@ -87,6 +100,11 @@ def parse_content(message: Dict[str, Any]) -> Dict[str, Any]:
         "deadline": compute_deadline_timestamp(message['timestamp'], content[2], content[3]),
         "active": True
     }
+
+
+def parse_remove_remove_command(content: str) -> str:
+    command = content.split(' ')
+    return command[2]
 
 
 def compute_deadline_timestamp(timestamp_submitted: str, time_value: int, time_unit: str) -> str:

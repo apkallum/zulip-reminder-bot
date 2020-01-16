@@ -6,7 +6,7 @@ from django.views.decorators.http import require_POST
 
 from remindmoi_bot.models import Reminder
 from remindmoi_bot.scheduler import scheduler
-from remindmoi_bot.zulip_utils import send_private_zulip
+from remindmoi_bot.zulip_utils import send_private_zulip, create_repeat_reminder
 
 
 @csrf_exempt
@@ -50,3 +50,13 @@ def list_reminders(request):
                                    'reminder_id': reminder['reminder_id']})
 
     return JsonResponse({'success': True, 'reminders_list': response_reminders})
+
+
+@csrf_exempt
+@require_POST
+def repeat_reminder(request):
+    repeat_request = json.loads(request.body)
+    reminder_id = repeat_request['reminder_id']
+    repeat_unit = repeat_request['repeat_unit']
+    create_repeat_reminder(reminder_id, repeat_unit)
+    return JsonResponse({'success': True})

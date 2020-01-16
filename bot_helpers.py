@@ -3,13 +3,15 @@ from typing import Any, Dict
 from datetime import timedelta, datetime
 
 
-COMMANDS = ['add', 'remove', 'list']
+COMMANDS = ['add', 'remove', 'list', 'repeat']
 UNITS = ['minutes', 'hours', 'days', 'weeks']
 SINGULAR_UNITS = ['minute', 'hour', 'day', 'week']
+REPEAT_UNITS = ['weekly', 'daily', 'monthly']
 
-ADD_ENDPOINT = 'http://localhost:8000/add_reminder/'
+ADD_ENDPOINT = 'http://localhost:8000/add_reminder'
 REMOVE_ENDPOINT = 'http://localhost:8000/remove_reminder'
 LIST_ENDPOINT = 'http://localhost:8000/list_reminders'
+REPEAT_ENDPOINT = 'http://localhost:8000/repeat_reminder'
 
 
 def is_valid_add_command(content: str, units=UNITS + SINGULAR_UNITS) -> bool:
@@ -49,6 +51,18 @@ def is_valid_list_command(content: str) -> bool:
         return False
 
 
+def is_repeat_reminder_command(content: str) -> bool:
+    try:
+        command = content.split(' ')
+        assert command[0] == 'repeat'
+        assert command[1] == 'reminder'
+        assert type(int(command[2])) == int
+        assert command[3] in REPEAT_UNITS
+        return True
+    except (AssertionError, IndexError):
+        return False
+
+
 def parse_add_command_content(message: Dict[str, Any]) -> Dict[str, Any]:
     """
     Given a message object with reminder details,
@@ -67,6 +81,11 @@ def parse_add_command_content(message: Dict[str, Any]) -> Dict[str, Any]:
 def parse_remove_command_content(content: str) -> Dict[str, Any]:
     command = content.split(' ')
     return {'reminder_id': command[2]}
+
+
+def parse_repeat_command_content(content:str) -> Dict[str, Any]:
+    command = content.split(' ')
+    return {'reminder_id': command[2], 'repeat_unit': command[3]}
 
 
 def parse_reminders_list(response: Dict[str, Any]) -> str:

@@ -3,13 +3,18 @@ import requests
 
 from typing import Any, Dict
 
-from bot_helpers import (ADD_ENDPOINT, REMOVE_ENDPOINT, LIST_ENDPOINT)
-from bot_helpers import (is_valid_add_command,
+from bot_helpers import (ADD_ENDPOINT,
+                         REMOVE_ENDPOINT,
+                         LIST_ENDPOINT,
+                         REPEAT_ENDPOINT,
+                         is_valid_add_command,
                          is_valid_remove_command,
                          is_valid_list_command,
+                         is_repeat_reminder_command,
                          parse_add_command_content,
                          parse_remove_command_content,
-                         parse_reminders_list)
+                         parse_reminders_list,
+                         parse_repeat_command_content)
 
 
 USAGE = '''
@@ -78,6 +83,15 @@ def get_bot_response(message: Dict[str, Any], bot_handler: Any) -> str:
         except (json.JSONDecodeError, AssertionError):
             return "Something went wrong"
         return parse_reminders_list(response)
+    if is_repeat_reminder_command(message['content']):
+        try:
+            repeat_request = parse_repeat_command_content(message['content'])
+            response = requests.post(url=REPEAT_ENDPOINT, json=repeat_request)
+            response = response.json()
+            assert response['success']
+        except (json.JSONDecodeError, AssertionError):
+            return "Something went wrong"
+        return f"Reminder will be repeated {repeat_request['repeat_unit']}."
     else:
         return "Invlaid input. Please check help."
 

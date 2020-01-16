@@ -23,7 +23,7 @@ from remindmoi_bot.views import (add_reminder,
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('add_reminder/', add_reminder),
+    path('add_reminder', add_reminder),
     path('remove_reminder', remove_reminder),
     path('list_reminders', list_reminders),
     path('repeat_reminder', repeat_reminder),

@@ -7,9 +7,9 @@ from bot_helpers import (ADD_ENDPOINT,
                          REMOVE_ENDPOINT,
                          LIST_ENDPOINT,
                          REPEAT_ENDPOINT,
-                         is_valid_add_command,
-                         is_valid_remove_command,
-                         is_valid_list_command,
+                         is_add_command,
+                         is_remove_command,
+                         is_list_command,
                          is_repeat_reminder_command,
                          parse_add_command_content,
                          parse_remove_command_content,
@@ -54,7 +54,7 @@ def get_bot_response(message: Dict[str, Any], bot_handler: Any) -> str:
     if message['content'].startswith(('help', '?')):
         return USAGE
 
-    if is_valid_add_command(message['content']):
+    if is_add_command(message['content']):
         try:
             reminder_object = parse_add_command_content(message)
             response = requests.post(url=ADD_ENDPOINT, json=reminder_object)  # TODO: Catch error when django server is down
@@ -65,7 +65,7 @@ def get_bot_response(message: Dict[str, Any], bot_handler: Any) -> str:
         except OverflowError:
             return "What's wrong with you?"
         return f"Reminder stored. Your reminder id is: {response['reminder_id']}"
-    if is_valid_remove_command(message['content']):
+    if is_remove_command(message['content']):
         try:
             reminder_id = parse_remove_command_content(message['content'])
             response = requests.post(url=REMOVE_ENDPOINT, json=reminder_id)
@@ -74,7 +74,7 @@ def get_bot_response(message: Dict[str, Any], bot_handler: Any) -> str:
         except (json.JSONDecodeError, AssertionError):
             return "Something went wrong"
         return "Reminder deleted."
-    if is_valid_list_command(message['content']):
+    if is_list_command(message['content']):
         try:
             zulip_user_email = {'zulip_user_email': message["sender_email"]}
             response = requests.post(url=LIST_ENDPOINT, json=zulip_user_email)

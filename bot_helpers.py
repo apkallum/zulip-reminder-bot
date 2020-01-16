@@ -6,7 +6,7 @@ from datetime import timedelta, datetime
 COMMANDS = ['add', 'remove', 'list', 'repeat']
 UNITS = ['minutes', 'hours', 'days', 'weeks']
 SINGULAR_UNITS = ['minute', 'hour', 'day', 'week']
-REPEAT_UNITS = ['weekly', 'daily', 'monthly']
+REPEAT_UNITS = ['weekly', 'daily', 'monthly'] + ['minutely']  # Remove after testing 
 
 ADD_ENDPOINT = 'http://localhost:8000/add_reminder'
 REMOVE_ENDPOINT = 'http://localhost:8000/remove_reminder'
@@ -14,7 +14,7 @@ LIST_ENDPOINT = 'http://localhost:8000/list_reminders'
 REPEAT_ENDPOINT = 'http://localhost:8000/repeat_reminder'
 
 
-def is_valid_add_command(content: str, units=UNITS + SINGULAR_UNITS) -> bool:
+def is_add_command(content: str, units=UNITS + SINGULAR_UNITS) -> bool:
     """
     Ensure message is in form <COMMAND> reminder <int> UNIT <str>
     """
@@ -30,7 +30,7 @@ def is_valid_add_command(content: str, units=UNITS + SINGULAR_UNITS) -> bool:
         return False
 
 
-def is_valid_remove_command(content: str) -> bool:
+def is_remove_command(content: str) -> bool:
     try:
         command = content.split(' ')
         assert command[0] == 'remove'
@@ -41,7 +41,7 @@ def is_valid_remove_command(content: str) -> bool:
         return False
 
 
-def is_valid_list_command(content: str) -> bool:
+def is_list_command(content: str) -> bool:
     try:
         command = content.split(' ')
         assert command[0] == 'list'

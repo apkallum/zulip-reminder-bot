@@ -6,7 +6,7 @@ from django.views.decorators.http import require_POST
 
 from remindmoi_bot.models import Reminder
 from remindmoi_bot.scheduler import scheduler
-from remindmoi_bot.zulip_utils import send_private_zulip, create_repeat_reminder
+from remindmoi_bot.zulip_utils import send_private_zulip, repeat_unit_to_interval
 
 
 @csrf_exempt
@@ -21,7 +21,9 @@ def add_reminder(request):
         send_private_zulip,
         'date',
         run_date=reminder.deadline,
-        args=[reminder.zulip_user_email, msg, reminder.reminder_id]
+        args=[reminder.zulip_user_email, msg, reminder.reminder_id],
+        # Create job name from title and reminder id
+        id=(str(reminder.reminder_id)+reminder.title)
     )
     return JsonResponse({'success': True,
                          'reminder_id': reminder.reminder_id})
@@ -32,7 +34,8 @@ def add_reminder(request):
 def remove_reminder(request):
     reminder_id = json.loads(request.body)['reminder_id']
     reminder = Reminder.objects.get(reminder_id=int(reminder_id))
-    reminder.delete()
+    scheduler.remove_job((str(reminder.reminder_id)+reminder.title))  # Remove reminder job
+    reminder.delete()  # Remove reminder object
     return JsonResponse({'success': True})
 
 
@@ -58,5 +61,14 @@ def repeat_reminder(request):
     repeat_request = json.loads(request.body)
     reminder_id = repeat_request['reminder_id']
     repeat_unit = repeat_request['repeat_unit']
-    create_repeat_reminder(reminder_id, repeat_unit)
+    reminder = Reminder.objects.get(reminder_id=reminder_id)
+    msg = f"Don't forget: {reminder.title}"
+    job_id = (str(reminder.reminder_id)+reminder.title)
+    scheduler.add_job(
+                      send_private_zulip,
+                      'interval',
+                      **repeat_unit_to_interval(repeat_unit),
+                      args=[reminder.zulip_user_email, msg, reminder.reminder_id],
+                      id=(job_id)
+        )
     return JsonResponse({'success': True})

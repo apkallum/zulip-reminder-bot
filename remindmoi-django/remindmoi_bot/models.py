@@ -1,7 +1,3 @@
-import pytz
-
-from datetime import datetime
-
 from django.db import models
 
 
@@ -13,9 +9,3 @@ class Reminder(models.Model):
     created = models.DateTimeField()
     deadline = models.DateTimeField()
     active = models.BooleanField(default=True)
-
-    def save(self, *args, **kwargs):
-        # Convert incoming unix ts to datetime objects before saving
-        self.created = datetime.utcfromtimestamp(self.created).replace(tzinfo=pytz.utc)
-        self.deadline = datetime.utcfromtimestamp(self.deadline).replace(tzinfo=pytz.utc)
-        super().save(*args, **kwargs)

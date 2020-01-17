@@ -1,6 +1,6 @@
 import zulip
 
-from typing import Any, Dict
+from typing import Dict
 
 from remindmoi.settings import ZULIPRC
 from remindmoi_bot.models import Reminder

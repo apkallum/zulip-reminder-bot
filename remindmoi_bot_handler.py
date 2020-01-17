@@ -19,20 +19,29 @@ from bot_helpers import (ADD_ENDPOINT,
 
 USAGE = '''
 A bot that schedules reminders for users.
-To store a reminder, mention or send a message to me in the following format:
 
-<COMMAND> reminder <int> UNIT <title of reminder>
+To store a reminder, mention or send a message to the bot in the following format:
 
-add reminder 1 day clean the dishes
-add reminder 10 hours eat
+`add reminder int <UNIT> <title_of_reminder>`
+
+`add reminder 1 day clean the dishes`
+`add reminder 10 hours eat`
 
 Avaliable time units: minutes, hours, days, weeks
 
 To remove a reminder:
-remove reminder <reminder_id>
+`remove reminder <reminder_id>`
 
 To list reminders:
-list reminders
+`list reminders`
+
+To repeat a reminder: 
+repeat reminder <reminder_id> every <int> <time_unit>
+
+`repeat reminder 23 every 2 weeks`
+
+Avaliable units: days, weeks, months
+
 '''
 
 

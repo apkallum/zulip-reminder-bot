@@ -51,7 +51,7 @@ def is_list_command(content: str) -> bool:
         return False
 
 
-def is_repeat_reminder_command(content: str) -> bool:
+def is_repeat_reminder_command(content: str, units=UNITS + SINGULAR_UNITS) -> bool:
     try:
         command = content.split(' ')
         assert command[0] == 'repeat'
@@ -59,7 +59,7 @@ def is_repeat_reminder_command(content: str) -> bool:
         assert type(int(command[2])) == int
         assert command[3] == 'every'
         assert type(int(command[4])) == int
-        assert command[5] in UNITS + SINGULAR_UNITS
+        assert command[5] in units
         return True
     except (AssertionError, IndexError):
         return False
@@ -71,13 +71,11 @@ def parse_add_command_content(message: Dict[str, Any]) -> Dict[str, Any]:
     construct a JSON/dict.
     """
     content = message['content'].split(' ', maxsplit=4)  # Ensure the last element is str
-    return {
-        "zulip_user_email": message['sender_email'],
-        "title": content[4],
-        "created": message['timestamp'],
-        "deadline": compute_deadline_timestamp(message['timestamp'], content[2], content[3]),
-        "active": True
-    }
+    return {"zulip_user_email": message['sender_email'],
+            "title": content[4],
+            "created": message['timestamp'],
+            "deadline": compute_deadline_timestamp(message['timestamp'], content[2], content[3]),
+            "active": True}
 
 
 def parse_remove_command_content(content: str) -> Dict[str, Any]:

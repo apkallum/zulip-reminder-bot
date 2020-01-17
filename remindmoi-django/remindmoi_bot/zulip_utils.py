@@ -1,6 +1,6 @@
 import zulip
 
-from typing import Dict
+from typing import Dict, List
 
 from remindmoi.settings import ZULIPRC
 from remindmoi_bot.models import Reminder
@@ -11,14 +11,17 @@ SINGULAR_UNITS = ['minute', 'hour', 'day', 'week', 'month']
 client = zulip.Client(config_file=ZULIPRC)
 
 
-def send_private_zulip(email: str, msg: str, reminder_id: int) -> bool:
-    response = client.send_message({
-        "type": "private",
-        "to": email,
-        "content": msg
-    })
+def send_private_zulip(reminder_id: int) -> bool:
     reminder = Reminder.objects.get(reminder_id=reminder_id)
-    reminder.active = False  # Remove the reminder object upon sending the message
+    emails = reminder.zulip_user_email.split(',')
+    content = f"Don't forget: {reminder.title}"
+    for email in emails:
+        response = client.send_message({
+            "type": "private",
+            "to": email,
+            "content": content
+        })
+    reminder.active = False  # For now, set reminder to negative to denoate that it's done
     return response['result'] == 'success'
 
 

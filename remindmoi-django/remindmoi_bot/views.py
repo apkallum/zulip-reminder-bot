@@ -23,19 +23,24 @@ def add_reminder(request):
                                created=datetime.utcfromtimestamp(reminder_obj['created']).replace(tzinfo=pytz.utc),
                                deadline=datetime.utcfromtimestamp(reminder_obj['deadline']).replace(tzinfo=pytz.utc)
                                )
-
     reminder.save()
-    msg = f"Don't forget: {reminder.title}"
     scheduler.add_job(  # Schedule reminder
         send_private_zulip,
         'date',
         run_date=reminder.deadline,
-        args=[reminder.zulip_user_email, msg, reminder.reminder_id],
+        args=[reminder.reminder_id],
         # Create job name from title and reminder id
         id=(str(reminder.reminder_id)+reminder.title)
     )
     return JsonResponse({'success': True,
                          'reminder_id': reminder.reminder_id})
+
+
+@csrf_exempt
+@require_POST
+def multi_remind(request):
+    # Get reminder object and modify the zulip_sender email to add emails of other users, comma seperated
+    pass
 
 
 @csrf_exempt
@@ -79,7 +84,7 @@ def repeat_reminder(request):
                       send_private_zulip,
                       'interval',
                       **repeat_unit_to_interval(repeat_unit, repeat_value),
-                      args=[reminder.zulip_user_email, msg, reminder.reminder_id],
+                      args=[reminder.reminder_id],
                       id=job_id
         )
     return JsonResponse({'success': True})

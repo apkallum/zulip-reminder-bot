@@ -5,6 +5,7 @@ from typing import Any, Dict
 from remindmoi.settings import ZULIPRC
 from remindmoi_bot.models import Reminder
 
+SINGULAR_UNITS = ['minute', 'hour', 'day', 'week', 'month']
 
 # Pass the path to your zuliprc file here.
 client = zulip.Client(config_file=ZULIPRC)
@@ -21,17 +22,15 @@ def send_private_zulip(email: str, msg: str, reminder_id: int) -> bool:
     return response['result'] == 'success'
 
 
-def create_repeat_reminder(reminder_id: int, repeat_unit: str) -> None:
-    # Create new reminder objects? Change scheduler type to recurring?
-    pass
+def repeat_unit_to_interval(repeat_unit: str, repeat_value: int) -> Dict[str, int]:
+    if repeat_unit in SINGULAR_UNITS:  # Convert singular units to plural
+        repeat_unit = f"{repeat_unit}s"
 
-
-def repeat_unit_to_interval(repeat_unit: str) -> Dict[str, int]:
-    if repeat_unit == 'minutely':
-        return {'minutes': 1}
-    if repeat_unit == 'daily':
-        return {'days': 1}
-    if repeat_unit == 'weekly':
-        return {'weeks': 1}
-    if repeat_unit == 'monthly':
-        return {'months': 1}
+    if repeat_unit == 'minutes':
+        return {'minutes': int(repeat_value)}
+    if repeat_unit == 'days':
+        return {'days': int(repeat_value)}
+    if repeat_unit == 'weeks':
+        return {'weeks': int(repeat_value)}
+    if repeat_unit == 'months':
+        return {'months': int(repeat_value)}

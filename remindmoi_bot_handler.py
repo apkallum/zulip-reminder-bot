@@ -91,7 +91,7 @@ def get_bot_response(message: Dict[str, Any], bot_handler: Any) -> str:
             assert response['success']
         except (json.JSONDecodeError, AssertionError):
             return "Something went wrong"
-        return f"Reminder will be repeated {repeat_request['repeat_unit']}."
+        return f"Reminder will be repeated every {repeat_request['repeat_value']} {repeat_request['repeat_unit']}."
     else:
         return "Invlaid input. Please check help."
 

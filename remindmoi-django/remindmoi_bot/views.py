@@ -61,14 +61,16 @@ def repeat_reminder(request):
     repeat_request = json.loads(request.body)
     reminder_id = repeat_request['reminder_id']
     repeat_unit = repeat_request['repeat_unit']
+    repeat_value = repeat_request['repeat_value']
     reminder = Reminder.objects.get(reminder_id=reminder_id)
     msg = f"Don't forget: {reminder.title}"
     job_id = (str(reminder.reminder_id)+reminder.title)
+    # import ipdb; ipdb.set_trace()
     scheduler.add_job(
                       send_private_zulip,
                       'interval',
-                      **repeat_unit_to_interval(repeat_unit),
+                      **repeat_unit_to_interval(repeat_unit, repeat_value),
                       args=[reminder.zulip_user_email, msg, reminder.reminder_id],
-                      id=(job_id)
+                      id=job_id
         )
     return JsonResponse({'success': True})

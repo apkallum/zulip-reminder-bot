@@ -57,7 +57,9 @@ def is_repeat_reminder_command(content: str) -> bool:
         assert command[0] == 'repeat'
         assert command[1] == 'reminder'
         assert type(int(command[2])) == int
-        assert command[3] in REPEAT_UNITS
+        assert command[3] == 'every'
+        assert type(int(command[4])) == int
+        assert command[5] in UNITS + SINGULAR_UNITS
         return True
     except (AssertionError, IndexError):
         return False
@@ -85,7 +87,9 @@ def parse_remove_command_content(content: str) -> Dict[str, Any]:
 
 def parse_repeat_command_content(content:str) -> Dict[str, Any]:
     command = content.split(' ')
-    return {'reminder_id': command[2], 'repeat_unit': command[3]}
+    return {'reminder_id': command[2],
+            'repeat_unit': command[5],
+            'repeat_value': command[4]}
 
 
 def parse_reminders_list(response: Dict[str, Any]) -> str:

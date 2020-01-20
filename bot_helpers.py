@@ -8,10 +8,10 @@ UNITS = ['minutes', 'hours', 'days', 'weeks']
 SINGULAR_UNITS = ['minute', 'hour', 'day', 'week']
 REPEAT_UNITS = ['weekly', 'daily', 'monthly'] + ['minutely']  # Remove after testing 
 
-ADD_ENDPOINT = 'http://localhost:8000/add_reminder'
-REMOVE_ENDPOINT = 'http://localhost:8000/remove_reminder'
-LIST_ENDPOINT = 'http://localhost:8000/list_reminders'
-REPEAT_ENDPOINT = 'http://localhost:8000/repeat_reminder'
+ADD_ENDPOINT = 'http://localhost:8789/add_reminder'
+REMOVE_ENDPOINT = 'http://localhost:8789/remove_reminder'
+LIST_ENDPOINT = 'http://localhost:8789/list_reminders'
+REPEAT_ENDPOINT = 'http://localhost:8789/repeat_reminder'
 
 
 def is_add_command(content: str, units=UNITS + SINGULAR_UNITS) -> bool:

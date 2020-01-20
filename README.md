@@ -46,7 +46,7 @@ Current API endpoints are:
 
 3- `/list_reminders`
 
-4- `/repeat_reminder'`
+4- `/repeat_reminder`
 
 Those endpoints are **not** meant to be interacted with directly. Instead, the bot speaks to them to store & schedule reminders. Further, they don't implement any kind of authentication or CSRF protection. Please do not expose the Django application to the internet. 
 

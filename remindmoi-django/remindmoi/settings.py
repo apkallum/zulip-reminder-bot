@@ -17,7 +17,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 # zuliprc file
-ZULIPRC = os.path.abspath(os.path.join(os.path.dirname( __file__ ), '../..', 'zuliprc'))
+ZULIPRC = os.path.abspath(os.path.join(os.path.dirname( __file__ ), '../../etc/', 'zuliprc'))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/

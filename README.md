@@ -30,9 +30,9 @@ Avaliable units: days, weeks, months
 
 2- Download and place your zuliprc file in the root directory of the project.
 
-3- Start the django server `./remindmoi/manage.py runserver`
+3- Start the django server `./remindmoi-django/manage.py runserver`
 
-4- Start the zulip bot handler `zulip-run-bot remindmoi_bot_handler.py --config-file zuliprc`
+4- Start the zulip bot handler `zulip-run-bot remindmoi_bot_handler.py --config-file etc/zuliprc`
 
 ## Usage
 
@@ -51,4 +51,7 @@ Current API endpoints are:
 Those endpoints are **not** meant to be interacted with directly. Instead, the bot speaks to them to store & schedule reminders. Further, they don't implement any kind of authentication or CSRF protection. Please do not expose the Django application to the internet. 
 
 ## Deploying 
-TODO
+
+You can deploy the bot however you like. The easisest way is to use `zulip-run-bot` and `manage.py` in a screen or tmux session. However, this solution doesn't provide the ability to manage or restart the bot in case of failures. 
+
+However, we also provide a `supervisor.conf` file to manage the bot's process. The `supervisor.conf` file assumes that the directory to this repo is `/opt/zulip-reminder-bot`. After adding it to your `/etc/supervisor/conf.d`, start the bot using `supervisor start remindmoi-bot:`.

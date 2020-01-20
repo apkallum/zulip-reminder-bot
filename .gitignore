@@ -35,6 +35,7 @@ htmlcov/
 
 # Ignore virtualenvs created by ./tools/provision
 zulip-api-py*-venv
+.venv
 
 # Automatically generated MANIFEST.in in zulip_bots
 zulip_bots/MANIFEST.in

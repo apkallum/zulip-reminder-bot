@@ -9,7 +9,7 @@ from django.views.decorators.http import require_POST
 
 from remindmoi_bot.models import Reminder
 from remindmoi_bot.scheduler import scheduler
-from remindmoi_bot.zulip_utils import send_private_zulip, repeat_unit_to_interval
+from remindmoi_bot.zulip_utils import send_private_zulip_reminder, repeat_unit_to_interval
 
 
 @csrf_exempt
@@ -25,7 +25,7 @@ def add_reminder(request):
                                )
     reminder.save()
     scheduler.add_job(  # Schedule reminder
-        send_private_zulip,
+        send_private_zulip_reminder,
         'date',
         run_date=reminder.deadline,
         args=[reminder.reminder_id],
@@ -77,11 +77,10 @@ def repeat_reminder(request):
     repeat_unit = repeat_request['repeat_unit']
     repeat_value = repeat_request['repeat_value']
     reminder = Reminder.objects.get(reminder_id=reminder_id)
-    msg = f"Don't forget: {reminder.title}"
     job_id = (str(reminder.reminder_id)+reminder.title)
     # import ipdb; ipdb.set_trace()
     scheduler.add_job(
-                      send_private_zulip,
+                      send_private_zulip_reminder,
                       'interval',
                       **repeat_unit_to_interval(repeat_unit, repeat_value),
                       args=[reminder.reminder_id],

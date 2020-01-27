@@ -11,10 +11,10 @@ SINGULAR_UNITS = ['minute', 'hour', 'day', 'week', 'month']
 client = zulip.Client(config_file=ZULIPRC)
 
 
-def send_private_zulip(reminder_id: int) -> bool:
+def send_private_zulip_reminder(reminder_id: int) -> bool:
     reminder = Reminder.objects.get(reminder_id=reminder_id)
     emails = reminder.zulip_user_email.split(',')
-    content = f"Don't forget: {reminder.title}"
+    content = f"Don't forget: {reminder.title}. Reminder id: {reminder.reminder_id}"
     for email in emails:
         response = client.send_message({
             "type": "private",

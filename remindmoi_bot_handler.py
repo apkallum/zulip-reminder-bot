@@ -22,23 +22,23 @@ A bot that schedules reminders for users.
 
 To store a reminder, mention or send a message to the bot in the following format:
 
-`add reminder int <UNIT> <title_of_reminder>`
+`add int <UNIT> <title_of_reminder>`
 
-`add reminder 1 day clean the dishes`
-`add reminder 10 hours eat`
+`add 1 day clean the dishes`
+`add 10 hours eat`
 
 Avaliable time units: minutes, hours, days, weeks
 
 To remove a reminder:
-`remove reminder <reminder_id>`
+`remove <reminder_id>`
 
 To list reminders:
-`list reminders`
+`list`
 
 To repeat a reminder: 
-repeat reminder <reminder_id> every <int> <time_unit>
+repeat <reminder_id> every <int> <time_unit>
 
-`repeat reminder 23 every 2 weeks`
+`repeat 23 every 2 weeks`
 
 Avaliable units: days, weeks, months
 

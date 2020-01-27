@@ -21,10 +21,9 @@ def is_add_command(content: str, units=UNITS + SINGULAR_UNITS) -> bool:
     try:
         command = content.split(' ', maxsplit=4)  # Ensure the last element is str
         assert command[0] == 'add'
-        assert command[1] == 'reminder'
-        assert type(int(command[2])) == int
-        assert command[3] in units
-        assert type(command[4]) == str
+        assert type(int(command[1])) == int
+        assert command[2] in units
+        assert type(command[3]) == str
         return True
     except (IndexError, AssertionError, ValueError):
         return False
@@ -34,8 +33,7 @@ def is_remove_command(content: str) -> bool:
     try:
         command = content.split(' ')
         assert command[0] == 'remove'
-        assert command[1] == 'reminder'
-        assert type(int(command[2])) == int
+        assert type(int(command[1])) == int
         return True
     except (AssertionError, IndexError):
         return False
@@ -45,7 +43,6 @@ def is_list_command(content: str) -> bool:
     try:
         command = content.split(' ')
         assert command[0] == 'list'
-        assert command[1] == 'reminders'
         return True
     except (AssertionError, IndexError):
         return False
@@ -55,11 +52,10 @@ def is_repeat_reminder_command(content: str, units=UNITS + SINGULAR_UNITS) -> bo
     try:
         command = content.split(' ')
         assert command[0] == 'repeat'
-        assert command[1] == 'reminder'
-        assert type(int(command[2])) == int
-        assert command[3] == 'every'
-        assert type(int(command[4])) == int
-        assert command[5] in units
+        assert type(int(command[1])) == int
+        assert command[2] == 'every'
+        assert type(int(command[3])) == int
+        assert command[4] in units
         return True
     except (AssertionError, IndexError):
         return False
@@ -72,22 +68,22 @@ def parse_add_command_content(message: Dict[str, Any]) -> Dict[str, Any]:
     """
     content = message['content'].split(' ', maxsplit=4)  # Ensure the last element is str
     return {"zulip_user_email": message['sender_email'],
-            "title": content[4],
+            "title": content[3],
             "created": message['timestamp'],
-            "deadline": compute_deadline_timestamp(message['timestamp'], content[2], content[3]),
+            "deadline": compute_deadline_timestamp(message['timestamp'], content[1], content[2]),
             "active": True}
 
 
 def parse_remove_command_content(content: str) -> Dict[str, Any]:
     command = content.split(' ')
-    return {'reminder_id': command[2]}
+    return {'reminder_id': command[1]}
 
 
 def parse_repeat_command_content(content:str) -> Dict[str, Any]:
     command = content.split(' ')
-    return {'reminder_id': command[2],
-            'repeat_unit': command[5],
-            'repeat_value': command[4]}
+    return {'reminder_id': command[1],
+            'repeat_unit': command[4],
+            'repeat_value': command[3]}
 
 
 def parse_reminders_list(response: Dict[str, Any]) -> str:

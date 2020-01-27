@@ -63,46 +63,39 @@ def get_bot_response(message: Dict[str, Any], bot_handler: Any) -> str:
     if message['content'].startswith(('help', '?')):
         return USAGE
 
-    if is_add_command(message['content']):
-        try:
+    try:
+        if is_add_command(message['content']):
             reminder_object = parse_add_command_content(message)
             response = requests.post(url=ADD_ENDPOINT, json=reminder_object)  # TODO: Catch error when django server is down
             response = response.json()
             assert response['success']
-        except (json.JSONDecodeError, AssertionError):
-            return "Something went wrong"
-        except OverflowError:
-            return "What's wrong with you?"
-        return f"Reminder stored. Your reminder id is: {response['reminder_id']}"
-    if is_remove_command(message['content']):
-        try:
+            return f"Reminder stored. Your reminder id is: {response['reminder_id']}"
+        if is_remove_command(message['content']):
             reminder_id = parse_remove_command_content(message['content'])
             response = requests.post(url=REMOVE_ENDPOINT, json=reminder_id)
             response = response.json()
             assert response['success']
-        except (json.JSONDecodeError, AssertionError):
-            return "Something went wrong"
-        return "Reminder deleted."
-    if is_list_command(message['content']):
-        try:
+            return "Reminder deleted."
+        if is_list_command(message['content']):
             zulip_user_email = {'zulip_user_email': message["sender_email"]}
             response = requests.post(url=LIST_ENDPOINT, json=zulip_user_email)
             response = response.json()
             assert response['success']
-        except (json.JSONDecodeError, AssertionError):
-            return "Something went wrong"
-        return parse_reminders_list(response)
-    if is_repeat_reminder_command(message['content']):
-        try:
+            return parse_reminders_list(response)
+        if is_repeat_reminder_command(message['content']):
             repeat_request = parse_repeat_command_content(message['content'])
             response = requests.post(url=REPEAT_ENDPOINT, json=repeat_request)
             response = response.json()
             assert response['success']
-        except (json.JSONDecodeError, AssertionError):
-            return "Something went wrong"
-        return f"Reminder will be repeated every {repeat_request['repeat_value']} {repeat_request['repeat_unit']}."
-    else:
-        return "Invlaid input. Please check help."
+            return f"Reminder will be repeated every {repeat_request['repeat_value']} {repeat_request['repeat_unit']}."
+
+        return "Invalid input. Please check help."
+    except requests.exceptions.ConnectionError:
+        return "Server not running, call Karim"
+    except (json.JSONDecodeError, AssertionError):
+        return "Something went wrong"
+    except OverflowError:
+        return "What's wrong with you?"
 
 
 handler_class = RemindMoiHandler

@@ -61,6 +61,10 @@ def is_repeat_reminder_command(content: str, units=UNITS + SINGULAR_UNITS) -> bo
         return False
 
 
+def is_multi_remind_command(content: str) -> bool:
+    pass
+
+
 def parse_add_command_content(message: Dict[str, Any]) -> Dict[str, Any]:
     """
     Given a message object with reminder details,
@@ -79,14 +83,25 @@ def parse_remove_command_content(content: str) -> Dict[str, Any]:
     return {'reminder_id': command[1]}
 
 
-def parse_repeat_command_content(content:str) -> Dict[str, Any]:
+def parse_repeat_command_content(content: str) -> Dict[str, Any]:
     command = content.split(' ')
     return {'reminder_id': command[1],
             'repeat_unit': command[4],
             'repeat_value': command[3]}
 
 
-def parse_reminders_list(response: Dict[str, Any]) -> str:
+def parse_multi_remind_command_content(content: str) -> Dict[str, Any]:
+    """
+    multi-remind 23 @**Jose** @**Max** ->
+    {'reminder_id': 23, 'users_to_remind': ['Jose', Max]}
+    """
+    command = content.split(' ', maxsplit=2)
+    users_to_remind = command[2].replace('*', '').replace('@', '').split(' ')
+    return {'reminder_id': command[1],
+            'users_to_remind': users_to_remind}
+
+
+def generate_reminders_list(response: Dict[str, Any]) -> str:
     bot_response = ''
     reminders_list = response['reminders_list']
     for reminder in reminders_list:

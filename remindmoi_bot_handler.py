@@ -13,7 +13,7 @@ from bot_helpers import (ADD_ENDPOINT,
                          is_repeat_reminder_command,
                          parse_add_command_content,
                          parse_remove_command_content,
-                         parse_reminders_list,
+                         generate_reminders_list,
                          parse_repeat_command_content)
 
 
@@ -81,7 +81,7 @@ def get_bot_response(message: Dict[str, Any], bot_handler: Any) -> str:
             response = requests.post(url=LIST_ENDPOINT, json=zulip_user_email)
             response = response.json()
             assert response['success']
-            return parse_reminders_list(response)
+            return generate_reminders_list(response)
         if is_repeat_reminder_command(message['content']):
             repeat_request = parse_repeat_command_content(message['content'])
             response = requests.post(url=REPEAT_ENDPOINT, json=repeat_request)

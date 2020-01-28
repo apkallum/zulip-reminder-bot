@@ -12,6 +12,7 @@ ADD_ENDPOINT = 'http://localhost:8789/add_reminder'
 REMOVE_ENDPOINT = 'http://localhost:8789/remove_reminder'
 LIST_ENDPOINT = 'http://localhost:8789/list_reminders'
 REPEAT_ENDPOINT = 'http://localhost:8789/repeat_reminder'
+MULTI_REMIND_ENDPOINT = 'http://localhost:8789/multi_remind'
 
 
 def is_add_command(content: str, units=UNITS + SINGULAR_UNITS) -> bool:

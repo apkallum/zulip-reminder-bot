@@ -7,14 +7,17 @@ from bot_helpers import (ADD_ENDPOINT,
                          REMOVE_ENDPOINT,
                          LIST_ENDPOINT,
                          REPEAT_ENDPOINT,
+                         MULTI_REMIND_ENDPOINT,
                          is_add_command,
                          is_remove_command,
                          is_list_command,
                          is_repeat_reminder_command,
+                         is_multi_remind_command,
                          parse_add_command_content,
                          parse_remove_command_content,
                          generate_reminders_list,
-                         parse_repeat_command_content)
+                         parse_repeat_command_content,
+                         parse_multi_remind_command_content)
 
 
 USAGE = '''
@@ -88,7 +91,12 @@ def get_bot_response(message: Dict[str, Any], bot_handler: Any) -> str:
             response = response.json()
             assert response['success']
             return f"Reminder will be repeated every {repeat_request['repeat_value']} {repeat_request['repeat_unit']}."
-
+        if is_multi_remind_command(message['content']):
+            multi_remind_request = parse_multi_remind_command_content(message['content'])
+            response = requests.post(url=MULTI_REMIND_ENDPOINT, json=multi_remind_request)
+            response = response.json()
+            assert response['success']
+            return f"Reminder will be sent to the specified recepients."  # Todo: add list of recepients
         return "Invalid input. Please check help."
     except requests.exceptions.ConnectionError:
         return "Server not running, call Karim"

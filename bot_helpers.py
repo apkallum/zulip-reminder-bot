@@ -10,7 +10,7 @@ REPEAT_UNITS = ['weekly', 'daily', 'monthly'] + ['minutely']  # Remove after tes
 ENDPOINT_URL = 'http://localhost:8789'
 ADD_ENDPOINT = ENDPOINT_URL + '/add_reminder'
 REMOVE_ENDPOINT = ENDPOINT_URL + '/remove_reminder'
-LIST_ENDPOINT = ENDPOINT_URL + 'list_reminders'
+LIST_ENDPOINT = ENDPOINT_URL + '/list_reminders'
 REPEAT_ENDPOINT = ENDPOINT_URL + '/repeat_reminder'
 MULTI_REMIND_ENDPOINT = ENDPOINT_URL + '/multi_remind'
 

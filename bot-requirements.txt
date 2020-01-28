@@ -3,3 +3,4 @@ zulip_bots
 zulip_botserver
 django
 django-apscheduler
+python-dateutil

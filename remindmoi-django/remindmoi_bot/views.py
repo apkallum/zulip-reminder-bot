@@ -49,8 +49,9 @@ def multi_remind(request):
     reminder_id = multi_remind_request['reminder_id']
     users_list = multi_remind_request['users_to_remind']
     reminder = Reminder.objects.get(reminder_id=int(reminder_id))
-    user_emails_to_remind = get_user_emails(users_list)
-    reminder.zulip_user_email = reminder.zulip_user_email + ','.join(user_emails_to_remind)
+    user_emails_to_remind = get_user_emails(users_list) + [reminder.zulip_user_email]
+    reminder.zulip_user_email = ','.join(user_emails_to_remind)
+    reminder.save()
     return JsonResponse({'success': True})
 
 

@@ -37,3 +37,11 @@ def repeat_unit_to_interval(repeat_unit: str, repeat_value: int) -> Dict[str, in
         return {'weeks': int(repeat_value)}
     if repeat_unit == 'months':
         return {'months': int(repeat_value)}
+
+
+def get_user_emails(usernames: List[str]) -> List[str]:
+    members = client.get_members()['members']
+    user_emails = [member['email']
+                   for member in members
+                   if member['full_name'] in usernames]
+    return user_emails

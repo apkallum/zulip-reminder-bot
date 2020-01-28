@@ -9,7 +9,9 @@ from django.views.decorators.http import require_POST
 
 from remindmoi_bot.models import Reminder
 from remindmoi_bot.scheduler import scheduler
-from remindmoi_bot.zulip_utils import send_private_zulip_reminder, repeat_unit_to_interval
+from remindmoi_bot.zulip_utils import (send_private_zulip_reminder,
+                                       repeat_unit_to_interval,
+                                       get_user_emails)
 
 
 @csrf_exempt
@@ -39,8 +41,17 @@ def add_reminder(request):
 @csrf_exempt
 @require_POST
 def multi_remind(request):
-    # Get reminder object and modify the zulip_sender email to add emails of other users, comma seperated
-    pass
+    """
+    Get reminder object and modify the zulip_sender email to
+    add emails of other users, comma seperated.
+    """
+    multi_remind_request = json.loads(request.body)
+    reminder_id = multi_remind_request['reminder_id']
+    users_list = multi_remind_request['users_to_remind']
+    reminder = Reminder.object.get(reminder_id=int(reminder_id))
+    user_emails_to_remind = get_user_emails(users_list)
+    reminder.zulip_user_email = reminder.zulip_user_email + ','.join(user_emails_to_remind)
+    return JsonResponse({'success': True})
 
 
 @csrf_exempt
@@ -59,7 +70,7 @@ def list_reminders(request):
     response_reminders = []  # List of reminders to be returned to the client
 
     zulip_user_email = json.loads(request.body)['zulip_user_email']
-    user_reminders = Reminder.objects.filter(zulip_user_email=zulip_user_email)
+    user_reminders = Reminder.objects.filter(zulip_user_email__icontains=zulip_user_email)
     # Return title and deadline (in unix timestamp) of reminders
     for reminder in user_reminders.values():
         response_reminders.append({'title': reminder['title'],

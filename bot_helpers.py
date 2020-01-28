@@ -62,7 +62,13 @@ def is_repeat_reminder_command(content: str, units=UNITS + SINGULAR_UNITS) -> bo
 
 
 def is_multi_remind_command(content: str) -> bool:
-    pass
+    try:
+        command = content.split(' ', maxsplit=2)
+        assert command[0] == 'multi-remind'
+        assert type(int(command[1])) == int
+        return True
+    except (AssertionError, IndexError):
+        return False
 
 
 def parse_add_command_content(message: Dict[str, Any]) -> Dict[str, Any]:

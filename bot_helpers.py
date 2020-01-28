@@ -77,7 +77,7 @@ def parse_add_command_content(message: Dict[str, Any]) -> Dict[str, Any]:
     Given a message object with reminder details,
     construct a JSON/dict.
     """
-    content = message['content'].split(' ', maxsplit=4)  # Ensure the last element is str
+    content = message['content'].split(' ', maxsplit=3)  # Ensure the last element is str
     return {"zulip_user_email": message['sender_email'],
             "title": content[3],
             "created": message['timestamp'],

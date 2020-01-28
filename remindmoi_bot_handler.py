@@ -69,7 +69,7 @@ def get_bot_response(message: Dict[str, Any], bot_handler: Any) -> str:
     try:
         if is_add_command(message['content']):
             reminder_object = parse_add_command_content(message)
-            response = requests.post(url=ADD_ENDPOINT, json=reminder_object)  # TODO: Catch error when django server is down
+            response = requests.post(url=ADD_ENDPOINT, json=reminder_object)
             response = response.json()
             assert response['success']
             return f"Reminder stored. Your reminder id is: {response['reminder_id']}"

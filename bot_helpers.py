@@ -3,16 +3,16 @@ from typing import Any, Dict
 from datetime import timedelta, datetime
 
 
-COMMANDS = ['add', 'remove', 'list', 'repeat']
 UNITS = ['minutes', 'hours', 'days', 'weeks']
 SINGULAR_UNITS = ['minute', 'hour', 'day', 'week']
 REPEAT_UNITS = ['weekly', 'daily', 'monthly'] + ['minutely']  # Remove after testing 
 
-ADD_ENDPOINT = 'http://localhost:8789/add_reminder'
-REMOVE_ENDPOINT = 'http://localhost:8789/remove_reminder'
-LIST_ENDPOINT = 'http://localhost:8789/list_reminders'
-REPEAT_ENDPOINT = 'http://localhost:8789/repeat_reminder'
-MULTI_REMIND_ENDPOINT = 'http://localhost:8789/multi_remind'
+ENDPOINT_URL = 'http://localhost:8789'
+ADD_ENDPOINT = ENDPOINT_URL + '/add_reminder'
+REMOVE_ENDPOINT = ENDPOINT_URL + '/remove_reminder'
+LIST_ENDPOINT = ENDPOINT_URL + 'list_reminders'
+REPEAT_ENDPOINT = ENDPOINT_URL + '/repeat_reminder'
+MULTI_REMIND_ENDPOINT = ENDPOINT_URL + '/multi_remind'
 
 
 def is_add_command(content: str, units=UNITS + SINGULAR_UNITS) -> bool:
@@ -65,7 +65,7 @@ def is_repeat_reminder_command(content: str, units=UNITS + SINGULAR_UNITS) -> bo
 def is_multi_remind_command(content: str) -> bool:
     try:
         command = content.split(' ', maxsplit=2)
-        assert command[0] == 'multi-remind'
+        assert command[0] == 'multiremind'
         assert type(int(command[1])) == int
         return True
     except (AssertionError, IndexError):
@@ -99,7 +99,7 @@ def parse_repeat_command_content(content: str) -> Dict[str, Any]:
 
 def parse_multi_remind_command_content(content: str) -> Dict[str, Any]:
     """
-    multi-remind 23 @**Jose** @**Max** ->
+    multiremind 23 @**Jose** @**Max** ->
     {'reminder_id': 23, 'users_to_remind': ['Jose', Max]}
     """
     command = content.split(' ', maxsplit=2)

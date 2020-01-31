@@ -63,7 +63,7 @@ class RemindMoiHandler(object):
 
 
 def get_bot_response(message: Dict[str, Any], bot_handler: Any) -> str:
-    if message['content'].startswith(('help', '?')):
+    if message['content'].startswith(('help', '?', 'halp')):
         return USAGE
 
     try:

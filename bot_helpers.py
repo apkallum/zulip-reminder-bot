@@ -36,7 +36,7 @@ def is_remove_command(content: str) -> bool:
         assert command[0] == 'remove'
         assert type(int(command[1])) == int
         return True
-    except (AssertionError, IndexError):
+    except (AssertionError, IndexError, ValueError):
         return False
 
 
@@ -45,7 +45,7 @@ def is_list_command(content: str) -> bool:
         command = content.split(' ')
         assert command[0] == 'list'
         return True
-    except (AssertionError, IndexError):
+    except (AssertionError, IndexError, ValueError):
         return False
 
 
@@ -58,7 +58,7 @@ def is_repeat_reminder_command(content: str, units=UNITS + SINGULAR_UNITS) -> bo
         assert type(int(command[3])) == int
         assert command[4] in units
         return True
-    except (AssertionError, IndexError):
+    except (AssertionError, IndexError, ValueError):
         return False
 
 
@@ -68,7 +68,7 @@ def is_multi_remind_command(content: str) -> bool:
         assert command[0] == 'multiremind'
         assert type(int(command[1])) == int
         return True
-    except (AssertionError, IndexError):
+    except (AssertionError, IndexError, ValueError):
         return False
 
 

@@ -3,6 +3,9 @@ import pytz
 
 from datetime import datetime
 
+from dateutil.tz import gettz
+from dateutil.parser import *
+
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
@@ -18,6 +21,27 @@ from remindmoi_bot.zulip_utils import (send_private_zulip_reminder,
 @require_POST
 def add_reminder(request):
     # TODO: make it safer. Add CSRF validation. Sanitize/validate post data
+    reminder_obj = json.loads(request.body)  # Create and save remninder object
+    reminder = Reminder.objects.create(
+                               zulip_user_email=reminder_obj['zulip_user_email'],
+                               title=reminder_obj['title'],
+                               created=datetime.utcfromtimestamp(reminder_obj['created']).replace(tzinfo=pytz.utc),
+                               deadline=datetime.utcfromtimestamp(reminder_obj['deadline']).replace(tzinfo=pytz.utc)
+                               )
+    reminder.save()
+    scheduler.add_job(  # Schedule reminder
+        send_private_zulip_reminder,
+        'date',
+        run_date=reminder.deadline,
+        args=[reminder.reminder_id],
+        # Create job name from title and reminder id
+        id=(str(reminder.reminder_id)+reminder.title)
+    )
+    return JsonResponse({'success': True,
+                         'reminder_id': reminder.reminder_id})
+
+
+def isoadd_reminder(request):
     reminder_obj = json.loads(request.body)  # Create and save remninder object
     reminder = Reminder.objects.create(
                                zulip_user_email=reminder_obj['zulip_user_email'],

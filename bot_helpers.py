@@ -111,6 +111,8 @@ def parse_multi_remind_command_content(content: str) -> Dict[str, Any]:
 def generate_reminders_list(response: Dict[str, Any]) -> str:
     bot_response = ''
     reminders_list = response['reminders_list']
+    if not reminders_list:
+        return 'No reminders avaliable.'
     for reminder in reminders_list:
         bot_response += f"""
         \nReminder id {reminder['reminder_id']}, titled {reminder['title']}, is scheduled on {datetime.fromtimestamp(reminder['deadline']).strftime('%Y-%m-%d %H:%M')}

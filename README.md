@@ -30,7 +30,7 @@ Avaliable units: days, weeks, months
 
 2- Download and place your zuliprc file in the root directory of the project.
 
-3- Start the django server `./remindmoi-django/manage.py runserver`
+3- Start the django server `./remindmoi-django/manage.py runserver 0.0.0.0:8789`
 
 4- Start the zulip bot handler `zulip-run-bot remindmoi_bot_handler.py --config-file etc/zuliprc`
 

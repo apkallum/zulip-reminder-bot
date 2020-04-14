@@ -16,17 +16,19 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-from remindmoi_bot.views import (add_reminder,
-                                 remove_reminder,
-                                 list_reminders,
-                                 repeat_reminder,
-                                 multi_remind)
+from remindmoi_bot.views import (
+    add_reminder,
+    remove_reminder,
+    list_reminders,
+    repeat_reminder,
+    multi_remind,
+)
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('add_reminder', add_reminder),
-    path('remove_reminder', remove_reminder),
-    path('list_reminders', list_reminders),
-    path('repeat_reminder', repeat_reminder),
-    path('multi_remind', multi_remind),
+    path("admin/", admin.site.urls),
+    path("add_reminder", add_reminder),
+    path("remove_reminder", remove_reminder),
+    path("list_reminders", list_reminders),
+    path("repeat_reminder", repeat_reminder),
+    path("multi_remind", multi_remind),
 ]

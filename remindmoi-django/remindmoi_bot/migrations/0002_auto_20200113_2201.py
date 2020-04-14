@@ -6,13 +6,11 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('remindmoi_bot', '0001_initial'),
+        ("remindmoi_bot", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='reminder',
-            name='created',
-            field=models.DateTimeField(),
+            model_name="reminder", name="created", field=models.DateTimeField(),
         ),
     ]

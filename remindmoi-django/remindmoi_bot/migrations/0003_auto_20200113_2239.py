@@ -6,18 +6,15 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('remindmoi_bot', '0002_auto_20200113_2201'),
+        ("remindmoi_bot", "0002_auto_20200113_2201"),
     ]
 
     operations = [
-        migrations.RemoveField(
-            model_name='reminder',
-            name='zulip_user_id',
-        ),
+        migrations.RemoveField(model_name="reminder", name="zulip_user_id",),
         migrations.AddField(
-            model_name='reminder',
-            name='zulip_user_email',
-            field=models.CharField(default='jose@monadical.com', max_length=128),
+            model_name="reminder",
+            name="zulip_user_email",
+            field=models.CharField(default="jose@monadical.com", max_length=128),
             preserve_default=False,
         ),
     ]

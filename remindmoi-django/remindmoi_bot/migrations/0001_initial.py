@@ -7,19 +7,18 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Reminder',
+            name="Reminder",
             fields=[
-                ('reminder_id', models.AutoField(primary_key=True, serialize=False)),
-                ('zulip_user_id', models.PositiveIntegerField()),
-                ('title', models.CharField(max_length=150)),
-                ('created', models.DateTimeField(auto_now_add=True)),
-                ('deadline', models.DateTimeField()),
-                ('active', models.BooleanField(default=True)),
+                ("reminder_id", models.AutoField(primary_key=True, serialize=False)),
+                ("zulip_user_id", models.PositiveIntegerField()),
+                ("title", models.CharField(max_length=150)),
+                ("created", models.DateTimeField(auto_now_add=True)),
+                ("deadline", models.DateTimeField()),
+                ("active", models.BooleanField(default=True)),
             ],
         ),
     ]

@@ -63,3 +63,4 @@ botserverrc
 *.sqlite3
 
 __pycache__/
+.python-version

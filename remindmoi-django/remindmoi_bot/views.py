@@ -1,5 +1,6 @@
 import json
 import pytz
+from apscheduler.jobstores.base import JobLookupError
 
 from datetime import datetime
 
@@ -84,7 +85,14 @@ def multi_remind(request):
 def remove_reminder(request):
     reminder_id = json.loads(request.body)['reminder_id']
     reminder = Reminder.objects.get(reminder_id=int(reminder_id))
-    scheduler.remove_job((str(reminder.reminder_id)+reminder.title))  # Remove reminder job
+    try:
+        scheduler.remove_job((str(reminder.reminder_id) + reminder.title))  # Remove reminder job
+    except JobLookupError:
+        """
+        Ignore failed job lookups here.
+        One-time reminders don't have one after they've fired.
+        """
+        pass
     reminder.delete()  # Remove reminder object
     return JsonResponse({'success': True})
 

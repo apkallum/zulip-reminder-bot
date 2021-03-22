@@ -13,11 +13,14 @@ from bot_helpers import (ADD_ENDPOINT,
                          is_list_command,
                          is_repeat_reminder_command,
                          is_multi_remind_command,
+                         is_add_repeat_reminder_command,
                          parse_add_command_content,
                          parse_remove_command_content,
                          generate_reminders_list,
                          parse_repeat_command_content,
-                         parse_multi_remind_command_content)
+                         parse_multi_remind_command_content,
+                         parse_add_reminder_command_content,
+)
 
 
 USAGE = '''
@@ -67,6 +70,15 @@ def get_bot_response(message: Dict[str, Any], bot_handler: Any) -> str:
         return USAGE
 
     try:
+        if is_add_repeat_reminder_command(message['content']):
+            reminder_object = parse_add_reminder_command_content(message)
+            response = requests.post(url=ADD_ENDPOINT, json=reminder_object)
+            reminder_id = response.json()['reminder_id']
+            reminder_object['reminder_id'] = str(reminder_id)
+            response = requests.post(url=REPEAT_ENDPOINT, json=reminder_object)
+            response = response.json()
+            assert response['success']
+            return f'Reminder stored. Your reminder id is: {reminder_id}'
         if is_add_command(message['content']):
             reminder_object = parse_add_command_content(message)
             response = requests.post(url=ADD_ENDPOINT, json=reminder_object)

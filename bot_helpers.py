@@ -30,6 +30,24 @@ def is_add_command(content: str, units=UNITS + SINGULAR_UNITS) -> bool:
         return False
 
 
+def is_add_repeat_reminder_command(content: str, units=UNITS + SINGULAR_UNITS) -> bool:
+    '''
+    Ensure message is in form ADD <int> UNIT every <int> UNIT <str>
+    '''
+    try:
+        command = content.split(' ', maxsplit=6)  # Ensure the last element is str
+        assert command[0] == 'add'
+        assert type(int(command[1])) == int
+        assert command[2] in units
+        assert command[3] == 'every'
+        assert type(int(command[4])) == int
+        assert command[5] in units
+        assert type(command[6]) == str
+        return True
+    except (IndexError, AssertionError, ValueError):
+        return False
+
+
 def is_remove_command(content: str) -> bool:
     try:
         command = content.split(' ')
@@ -85,6 +103,27 @@ def parse_add_command_content(message: Dict[str, Any]) -> Dict[str, Any]:
             "active": True}
 
 
+def parse_add_reminder_command_content(message: Dict[str, Any]) -> Dict[str, Any]:
+    '''
+    Given a message object with reminder details,
+    construct a JSON/dict.
+    '''
+    content = message['content'].split(
+        ' ', maxsplit=6
+    )  # Ensure the last element is str
+    return {
+        'zulip_user_email': message['sender_email'],
+        'title': content[6],
+        'created': message['timestamp'],
+        'deadline': compute_deadline_timestamp(
+            message['timestamp'], content[1], content[2]
+        ),
+        'active': True,
+        'repeat_unit': content[5],
+        'repeat_value': content[4],
+    }
+
+
 def parse_remove_command_content(content: str) -> Dict[str, Any]:
     command = content.split(' ')
     return {'reminder_id': command[1]}
@@ -115,7 +154,7 @@ def generate_reminders_list(response: Dict[str, Any]) -> str:
         return 'No reminders avaliable.'
     for reminder in reminders_list:
         bot_response += f"""
-        \nReminder id {reminder['reminder_id']}, titled {reminder['title']}, is scheduled on {datetime.fromtimestamp(reminder['deadline']).strftime('%Y-%m-%d %H:%M')}
+        \nReminder id {reminder['reminder_id']}, titled {reminder['title']}, is scheduled on {datetime.fromtimestamp(reminder['deadline']).strftime('%Y-%m-%d %H:%M')} {reminder['interval']}
         """
     return bot_response
 

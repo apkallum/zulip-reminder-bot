@@ -16,7 +16,7 @@ from remindmoi_bot.scheduler import scheduler
 from remindmoi_bot.zulip_utils import (send_private_zulip_reminder,
                                        repeat_unit_to_interval,
                                        get_user_emails)
-
+from apscheduler.triggers.interval import IntervalTrigger
 
 @csrf_exempt
 @require_POST
@@ -101,14 +101,22 @@ def remove_reminder(request):
 @require_POST
 def list_reminders(request):
     response_reminders = []  # List of reminders to be returned to the client
-
+    
     zulip_user_email = json.loads(request.body)['zulip_user_email']
     user_reminders = Reminder.objects.filter(zulip_user_email__icontains=zulip_user_email)
     # Return title and deadline (in unix timestamp) of reminders
     for reminder in user_reminders.values():
+        job_id = str(reminder['reminder_id']) + reminder['title']
+        scheduled_job =  scheduler.get_job(job_id) 
+        interval = ''
+        if scheduled_job is not None:  
+            if isinstance(scheduled_job.trigger,IntervalTrigger):
+                interval = f"schedule interval {str(scheduled_job.trigger.interval)}"
+
         response_reminders.append({'title': reminder['title'],
                                    'deadline': reminder['deadline'].timestamp(),
-                                   'reminder_id': reminder['reminder_id']})
+                                   'reminder_id': reminder['reminder_id'],
+                                   'interval' : interval})
 
     return JsonResponse({'success': True, 'reminders_list': response_reminders})
 
@@ -123,11 +131,19 @@ def repeat_reminder(request):
     reminder = Reminder.objects.get(reminder_id=reminder_id)
     job_id = (str(reminder.reminder_id)+reminder.title)
     # import ipdb; ipdb.set_trace()
-    scheduler.add_job(
-                      send_private_zulip_reminder,
-                      'interval',
-                      **repeat_unit_to_interval(repeat_unit, repeat_value),
-                      args=[reminder.reminder_id],
-                      id=job_id
+    if scheduler.get_job(job_id) is not None:
+        # job exists, modify it
+        updated_trigger = scheduler._create_trigger(
+            'interval', repeat_unit_to_interval(repeat_unit, repeat_value)
+        )
+        scheduler.modify_job(job_id, None, trigger=updated_trigger)
+    else:
+        # job does not exist, create it
+        scheduler.add_job(
+            send_private_zulip_reminder,
+            'interval',
+            **repeat_unit_to_interval(repeat_unit, repeat_value),
+            args=[reminder.reminder_id],
+            id=job_id
         )
     return JsonResponse({'success': True})
